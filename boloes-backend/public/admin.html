@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin - Bolões</title>
+    <link rel="stylesheet" href="admin.css" />
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>🔐 Admin - Bolões</h1>
+
+        <section class="card" id="loginCard">
+            <h2>Login</h2>
+            <div class="row">
+                <input id="user" placeholder="Usuário" value="admin" />
+                <input id="pass" placeholder="Senha" type="password" />
+                <button id="btnLogin">Entrar</button>
+            </div>
+            <p class="muted" id="loginMsg"></p>
+        </section>
+
+        <section class="card hidden" id="appCard">
+            <div class="top">
+                <h2>Bolões</h2>
+                <button id="btnNovo">+ Novo bolão</button>
+            </div>
+
+            <div id="list"></div>
+
+            <h3>Editar / Criar</h3>
+            <div class="grid">
+                <input id="f_id" placeholder="id" disabled />
+                <input id="f_nome" placeholder="Nome (COMBO 1)" />
+                <select id="f_destaque_select">
+                    <option value="">Sem destaque</option>
+                    <option value="Mais vendido ⭐⭐⭐⭐">Mais vendido ⭐⭐⭐⭐</option>
+                    <option value="Rápido ⭐⭐⭐">Rápido ⭐⭐⭐</option>
+                    <option value="Boa chance ⭐⭐">Boa chance ⭐⭐</option>
+                    <option value="Top ⭐">Top ⭐</option>
+                    <option value="Últimas vagas ⚡">Últimas vagas ⚡</option>
+                    <option value="Promoção 🔥">Promoção 🔥</option>
+                    <option value="Novo ✅">Novo ✅</option>
+                    <option value="Recomendado 👍">Recomendado 👍</option>
+                    <option value="custom">✍️ Personalizado...</option>
+                </select>
+
+                <select id="f_modalidade">
+                    <option value="lotinha">🟣 Lotinha</option>
+                    <option value="super5">🔵 Super 5</option>
+                    <option value="super6">🟢 Super 6</option>
+                </select>
+
+                <input id="f_destaque" placeholder="Digite o destaque personalizado…"
+                    style="display:none; margin-top:10px;" />
+                <input id="f_hash" placeholder="Hash do combo (uuid)" />
+                <input id="f_valor" placeholder="Valor cota (45)" type="number" step="0.01" />
+                <input id="f_jogos" placeholder="Jogos (45)" type="number" />
+                <input id="f_dezenas" placeholder="Dezenas (19)" type="number" />
+                <input id="f_premio" placeholder="Premiação (500)" type="number" step="0.01" />
+                <input id="f_premioSub" placeholder="Premiação sub (por bilhete)" />
+                <input id="f_data" type="date" />
+                <input id="f_ordem" placeholder="Ordem (0,1,2...)" type="number" />
+                <select id="f_status">
+                    <option value="disponivel">disponível</option>
+                    <option value="esgotado">esgotado</option>
+                </select>
+                <label class="check"><input type="checkbox" id="f_ativo" /> Ativo</label>
+            </div>
+
+            <div class="row">
+                <button id="btnSalvar">💾 Salvar</button>
+                <button id="btnLimpar" class="ghost">Limpar</button>
+                <span class="muted" id="msg"></span>
+            </div>
+        </section>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+body{font-family:system-ui;background:#111;color:#fff;margin:0;padding:18px}
+.wrap{max-width:980px;margin:0 auto}
+.card{background:#1b1b1b;border:1px solid #333;border-radius:14px;padding:14px;margin:12px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input,select{padding:10px;border-radius:10px;border:1px solid #333;background:#0f0f0f;color:#fff;flex:1;min-width:180px}
+button{padding:10px 14px;border-radius:10px;border:0;background:#22c55e;color:#052019;font-weight:800;cursor:pointer}
+button.ghost{background:#2b2b2b;color:#fff;border:1px solid #333}
+.hidden{display:none}
+.muted{opacity:.75}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.item{padding:12px;border:1px solid #333;border-radius:12px;margin:10px 0;background:#151515}
+.item .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.item small{opacity:.7}
+.check{display:flex;gap:8px;align-items:center}
+input[type="date"] {
+  color-scheme: dark;
+}

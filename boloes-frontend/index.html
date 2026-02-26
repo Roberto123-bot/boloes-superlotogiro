@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>⚡ Bolão Relâmpago</title>
+
+    <style>
+        body {
+            font-family: system-ui;
+            background: #111;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: auto
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #1b1b1b;
+            border: 1px solid #333;
+            border-radius: 18px;
+            padding: 16px;
+        }
+
+        .badge {
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: .8rem;
+            font-weight: 700;
+        }
+
+        .disponivel {
+            background: #22c55e;
+            color: #052019
+        }
+
+        .esgotado {
+            background: #ef4444;
+            color: #fff
+        }
+
+        button {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 14px;
+            border: 0;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .btn-pagar {
+            background: #22c55e;
+            color: #052019;
+        }
+
+        .btn-disabled {
+            background: #444;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        small {
+            opacity: .7
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            opacity: .7;
+        }
+
+        /* ===== FAIXA PASSANTE ===== */
+        .ticker {
+            margin: 15px 0 25px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #1b1b1b;
+            border: 1px solid #333;
+        }
+
+        .ticker-track {
+            display: flex;
+            width: max-content;
+            animation: tickerMove linear infinite;
+            animation-duration: 25s;
+        }
+
+        .ticker-content {
+            display: flex;
+            gap: 60px;
+            padding: 10px 20px;
+            white-space: nowrap;
+            font-weight: 600;
+            opacity: 0.85;
+        }
+
+        .ticker-content span {
+            display: inline-block;
+        }
+
+        @keyframes tickerMove {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wrap">
+        <h1>⚡ Bolões Disponíveis - Roberto Consultor</h1>
+        <div class="ticker">
+            <div class="ticker-track" id="tickerTrack">
+                <div class="ticker-content" id="tickerContent">
+                    <span>🍀 Prêmio pago na conta do ganhador</span>
+                    <span>🎯 Rápido e seguro</span>
+                    <span>✅ Checkout Pix em segundos</span>
+                    <span>⚡ Vagas limitadas (garanta já)</span>
+                </div>
+            </div>
+        </div>
+        <div id="grid" class="grid"></div>
+        <div id="loading" class="loading">Carregando bolões...</div>
+    </div>
+
+    <script>
+        const BACKEND = "http://localhost:3000"; // ⚠️ COLOQUE SUA URL
+
+        const grid = document.getElementById("grid");
+        const loading = document.getElementById("loading");
+
+        function getIcon(modalidade) {
+            return {
+                lotinha: "images/lotinha.png",
+                super5: "images/super5.png",
+                super6: "images/super6.png"
+            }[modalidade] || "images/super6.png";
+        }
+
+        async function carregarBoloes() {
+            try {
+                const res = await fetch(BACKEND + "/api/boloes/ativos");
+                const data = await res.json();
+
+                loading.style.display = "none";
+                grid.innerHTML = "";
+
+                if (!data.ok || !data.boloes.length) {
+                    grid.innerHTML = "<p>Nenhum bolão disponível no momento.</p>";
+                    return;
+                }
+
+                data.boloes.forEach(b => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+
+                    card.innerHTML = `
+        <div class="top">
+          <h2>
+  <img src="${getIcon(b.modalidade)}" 
+       style="height:32px;vertical-align:middle;margin-right:8px;border-radius:6px;">
+  ${b.nome}
+</h2>
+          <span class="badge ${b.status}">
+            ${b.status === "disponivel" ? "Disponível" : "Esgotado"}
+          </span>
+        </div>
+
+        <p><small>${b.destaque || ""}</small></p>
+
+        ${b.dataSorteio
+                            ? `<p class="data-sorteio"><strong>📅 Sorteio:</strong> ${b.dataSorteio}</p>`
+                            : ""
+                        }
+
+        <p><strong>💰 Valor:</strong> R$ ${Number(b.valorCota).toFixed(2)}</p>
+        <p><strong>🎯 Jogos:</strong> ${b.jogos}</p>
+        <p><strong>🔢 Dezenas:</strong> ${b.dezenas}</p>
+        <p><strong>🏆 Premiação:</strong> R$ ${Number(b.premiacao).toFixed(2)} (${b.premiacaoSub})</p>
+
+        ${b.status === "disponivel"
+                            ? `<button class="btn-pagar" onclick="window.open('${b.url}','_blank')">
+              ✅ Selecionar e pagar
+            </button>`
+                            : `<button class="btn-disabled" disabled>
+              ❌ Indisponível
+            </button>`
+                        }
+      `;
+
+                    grid.appendChild(card);
+                });
+
+            } catch (e) {
+                loading.innerText = "Erro ao carregar bolões.";
+            }
+        }
+
+        // ===== TICKER LOOP INFINITO =====
+        (function initTicker() {
+            const content = document.getElementById("tickerContent");
+            if (!content) return;
+
+            content.innerHTML += content.innerHTML; // duplica
+        })();
+
+        carregarBoloes();
+    </script>
+
+</body>
+
+</html>
