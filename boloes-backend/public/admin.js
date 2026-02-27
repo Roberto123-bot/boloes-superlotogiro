@@ -33,7 +33,7 @@ function isoToBrDate(iso) {
 function fillForm(row) {
     $("f_id").value = row?.id ?? "";
     $("f_nome").value = row?.nome ?? "";
-    $("f_modalidade").value = row?.modalidade ?? "super6";
+    $("f_modalidade").value = row?.modalidade ?? "lotinha";
     $("f_destaque").value = row?.destaque ?? "";
     $("f_hash").value = row?.hash_combo ?? "";
     $("f_valor").value = row?.valor_cota ?? "";
