@@ -1,4 +1,3 @@
-node_modules
-.env
-*.sqlite
-database.sqlite
+boloes-backend/.env
+boloes-backend/database.sqlite
+boloes-backend/node_modules

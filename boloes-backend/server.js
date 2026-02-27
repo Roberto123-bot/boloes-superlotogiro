@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const jwt = require("jsonwebtoken");
 const db = require("./db");
+const { statusComboExterno, syncStatusCombo } = require("./sync");
 
 const app = express();
 
@@ -60,6 +61,47 @@ function run(sql, params = []) {
         });
     });
 }
+
+// =============================
+// AGENDADOR POR HORÁRIO FIXO
+// =============================
+
+process.env.TZ = "America/Sao_Paulo";
+
+const HORARIOS_SYNC = new Set([
+    "20:50",
+    "21:00"
+    // pode adicionar mais: "21:30"
+]);
+
+let ultimaExecucao = "";
+
+setInterval(async () => {
+    try {
+        const agora = new Date();
+
+        const hh = String(agora.getHours()).padStart(2, "0");
+        const mm = String(agora.getMinutes()).padStart(2, "0");
+        const horaAtual = `${hh}:${mm}`;
+
+        const yyyy = agora.getFullYear();
+        const mes = String(agora.getMonth() + 1).padStart(2, "0");
+        const dia = String(agora.getDate()).padStart(2, "0");
+
+        const chaveExecucao = `${yyyy}-${mes}-${dia} ${horaAtual}`;
+
+        if (HORARIOS_SYNC.has(horaAtual) && ultimaExecucao !== chaveExecucao) {
+            ultimaExecucao = chaveExecucao;
+
+            console.log(`⏰ Horário ${horaAtual} detectado - iniciando sync...`);
+            await syncStatusCombo({ all, run });
+            console.log("✅ Sync por horário finalizado.");
+        }
+
+    } catch (err) {
+        console.error("❌ Erro no agendador:", err.message);
+    }
+}, 30 * 1000); // checa a cada 30 segundos
 
 // ------------------- Auth -------------------
 app.post("/api/admin/login", (req, res) => {
@@ -250,6 +292,52 @@ app.delete("/api/admin/boloes/:id", auth, async (req, res) => {
         const id = Number(req.params.id);
         await run(`DELETE FROM boloes WHERE id=?`, [id]);
         res.json({ ok: true });
+    } catch (err) {
+        res.status(500).json({ ok: false, message: err.message });
+    }
+});
+
+app.post("/api/admin/boloes/:id/sync-status", auth, async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+
+        const row = await get(`SELECT id, hash_combo, status FROM boloes WHERE id=?`, [id]);
+        if (!row) return res.status(404).json({ ok: false, message: "Não encontrado" });
+
+        const novoStatus = await statusComboExterno(row.hash_combo);
+
+        if (novoStatus !== row.status) {
+            await run(`UPDATE boloes SET status=?, updated_at=datetime('now') WHERE id=?`, [
+                novoStatus,
+                id,
+            ]);
+        }
+
+        return res.json({ ok: true, id, antigo: row.status, novo: novoStatus });
+    } catch (err) {
+        return res.status(500).json({ ok: false, message: err.message });
+    }
+});
+
+app.post("/api/admin/boloes/sync-status", auth, async (req, res) => {
+    try {
+        const rows = await all(`SELECT id, hash_combo, status FROM boloes WHERE ativo=1`);
+        const results = [];
+
+        for (const r of rows) {
+            const novoStatus = await statusComboExterno(r.hash_combo);
+
+            if (novoStatus !== r.status) {
+                await run(`UPDATE boloes SET status=?, updated_at=datetime('now') WHERE id=?`, [
+                    novoStatus,
+                    r.id,
+                ]);
+            }
+
+            results.push({ id: r.id, antigo: r.status, novo: novoStatus });
+        }
+
+        res.json({ ok: true, total: results.length, results });
     } catch (err) {
         res.status(500).json({ ok: false, message: err.message });
     }
