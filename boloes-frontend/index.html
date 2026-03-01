@@ -7,108 +7,91 @@
     <title>⚡ Bolão Relâmpago</title>
 
     <style>
+        :root {
+            --bg: #0b0f14;
+            --panel: #0f1620;
+            --card: #111a24;
+            --text: #eaf2ff;
+            --muted: #a9b6c7;
+            --stroke: rgba(255, 255, 255, .08);
+            --shadow: 0 18px 50px rgba(0, 0, 0, .45);
+            --shadowSoft: 0 10px 25px rgba(0, 0, 0, .25);
+            --radius: 22px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: system-ui;
-            background: #111;
-            color: #fff;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: radial-gradient(1200px 600px at 20% 0%, rgba(120, 91, 255, .22), transparent 55%),
+                radial-gradient(900px 500px at 80% 10%, rgba(34, 197, 94, .18), transparent 55%),
+                linear-gradient(180deg, #070a0f, #0a1018 60%, #070a0f);
+            color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding: 22px 18px 40px;
         }
 
         .wrap {
-            max-width: 1100px;
-            margin: auto
+            max-width: 1120px;
+            margin: auto;
+        }
+
+        .hero {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(22px, 3vw, 34px);
+            letter-spacing: -0.5px;
+            line-height: 1.15;
+        }
+
+        .sub {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-weight: 500;
+            font-size: 14px;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 18px;
+            margin-top: 16px;
         }
 
-        .card {
-            background: #1b1b1b;
-            border: 1px solid #333;
-            border-radius: 18px;
-            padding: 16px;
-        }
-
-        .badge {
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: .8rem;
-            font-weight: 700;
-        }
-
-        .disponivel {
-            background: #22c55e;
-            color: #052019
-        }
-
-        .esgotado {
-            background: #ef4444;
-            color: #fff
-        }
-
-        button {
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 14px;
-            border: 0;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .btn-pagar {
-            background: #22c55e;
-            color: #052019;
-        }
-
-        .btn-disabled {
-            background: #444;
-            color: #aaa;
-            cursor: not-allowed;
-        }
-
-        .top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        small {
-            opacity: .7
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            opacity: .7;
-        }
-
-        /* ===== FAIXA PASSANTE ===== */
+        /* ===== FAIXA PASSANTE (ticker) ===== */
         .ticker {
-            margin: 15px 0 25px;
+            margin: 14px 0 10px;
             overflow: hidden;
             border-radius: 999px;
-            background: #1b1b1b;
-            border: 1px solid #333;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--stroke);
+            box-shadow: var(--shadowSoft);
+            backdrop-filter: blur(8px);
         }
 
         .ticker-track {
             display: flex;
             width: max-content;
             animation: tickerMove linear infinite;
-            animation-duration: 25s;
+            animation-duration: 22s;
         }
 
         .ticker-content {
             display: flex;
-            gap: 60px;
-            padding: 10px 20px;
+            gap: 56px;
+            padding: 10px 18px;
             white-space: nowrap;
-            font-weight: 600;
-            opacity: 0.85;
+            font-weight: 650;
+            color: rgba(234, 242, 255, .9);
         }
 
         .ticker-content span {
@@ -124,13 +107,246 @@
                 transform: translateX(-50%);
             }
         }
+
+        .loading {
+            text-align: center;
+            padding: 34px;
+            color: rgba(234, 242, 255, .75);
+        }
+
+        /* ===== CARD NOVO ===== */
+        .card {
+            position: relative;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--stroke);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+            min-height: 260px;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, .14);
+            box-shadow: 0 22px 60px rgba(0, 0, 0, .55);
+        }
+
+        /* topo colorido por modalidade */
+        .card__top {
+            padding: 14px 16px 12px;
+            background: linear-gradient(90deg, var(--theme1), var(--theme2));
+            border-bottom: 1px solid rgba(255, 255, 255, .12);
+        }
+
+        .topline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .title img {
+            height: 34px;
+            width: 34px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, .18);
+            padding: 6px;
+            border: 1px solid rgba(255, 255, 255, .18);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, .25);
+            flex: 0 0 auto;
+        }
+
+        .title h2 {
+            margin: 0;
+            font-size: 18px;
+            letter-spacing: .2px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .badge {
+            padding: 7px 11px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            border: 1px solid rgba(255, 255, 255, .22);
+            background: rgba(0, 0, 0, .20);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 0 0 auto;
+        }
+
+        .badge.disponivel::before {
+            content: "●";
+            font-size: 12px;
+        }
+
+        .badge.fechado::before,
+        .badge.esgotado::before {
+            content: "●";
+            font-size: 12px;
+            opacity: .9;
+        }
+
+        .badge.disponivel {
+            background: rgba(16, 185, 129, .22);
+            border-color: rgba(16, 185, 129, .35);
+        }
+
+        .badge.fechado,
+        .badge.esgotado {
+            background: rgba(239, 68, 68, .22);
+            border-color: rgba(239, 68, 68, .35);
+        }
+
+        .card__body {
+            padding: 14px 16px 16px;
+        }
+
+        .hint {
+            color: rgba(234, 242, 255, .85);
+            font-weight: 700;
+            margin: 8px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hint small {
+            font-weight: 650;
+            color: rgba(234, 242, 255, .78);
+            opacity: 1;
+        }
+
+        .info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 12px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(255, 255, 255, .12);
+        }
+
+        .row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 10px 10px;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, .16);
+            border: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .k {
+            color: rgba(234, 242, 255, .70);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .v {
+            color: rgba(234, 242, 255, .98);
+            font-size: 14px;
+            font-weight: 850;
+            letter-spacing: .2px;
+        }
+
+        .cta {
+            margin-top: 14px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px 14px;
+            border-radius: 16px;
+            border: 0;
+            font-weight: 900;
+            cursor: pointer;
+            transition: transform .12s ease, filter .12s ease, opacity .12s ease;
+        }
+
+        .btn-pagar {
+            background: linear-gradient(90deg, rgba(34, 197, 94, 1), rgba(16, 185, 129, 1));
+            color: #062012;
+            box-shadow: 0 14px 30px rgba(34, 197, 94, .22);
+        }
+
+        .btn-pagar:hover {
+            filter: brightness(1.02);
+            transform: translateY(-1px);
+        }
+
+        .btn-disabled {
+            background: rgba(255, 255, 255, .10);
+            color: rgba(234, 242, 255, .55);
+            cursor: not-allowed;
+            border: 1px solid rgba(255, 255, 255, .10);
+            box-shadow: none;
+        }
+
+        /* chips de modalidade no topo (opcional) */
+        .chip {
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, .15);
+            background: rgba(0, 0, 0, .18);
+            color: rgba(234, 242, 255, .9);
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .muted {
+            color: rgba(234, 242, 255, .72);
+            font-weight: 650;
+            font-size: 13px;
+            margin: 8px 0 0;
+        }
+
+        /* responsivo */
+        @media (max-width: 520px) {
+            body {
+                padding: 18px 14px 34px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
 <body>
 
     <div class="wrap">
-        <h1>⚡ Bolões Disponíveis - Roberto Consultor</h1>
+        <div class="hero">
+            <div>
+                <h1>⚡ Bolões - Loterias Alternativas</h1>
+                <p class="sub">Escolha seu bolão, pague via Pix e acompanhe o status em tempo real.</p>
+            </div>
+        </div>
+
         <div class="ticker">
             <div class="ticker-track" id="tickerTrack">
                 <div class="ticker-content" id="tickerContent">
@@ -141,6 +357,7 @@
                 </div>
             </div>
         </div>
+
         <div id="grid" class="grid"></div>
         <div id="loading" class="loading">Carregando bolões...</div>
     </div>
@@ -164,6 +381,22 @@
             }[modalidade] || "images/lotinha.png";
         }
 
+        // ✅ TEMA POR MODALIDADE (cores estilo “Caixa”)
+        function getTheme(modalidade) {
+            const themes = {
+                lotinha: { name: "Lotofacil / Lotinha", c1: "#7c3aed", c2: "#a855f7" },   // roxo
+                super5: { name: "Quina / Super5", c1: "#1d4ed8", c2: "#3b82f6" }, // azul
+                super6: { name: "Mega / Super6", c1: "#16a34a", c2: "#22c55e" },  // verde
+                duplo6: { name: "Duplo6", c1: "#ea580c", c2: "#f97316" },    // laranja
+                maniadejogo: { name: "Mania", c1: "#0ea5e9", c2: "#22d3ee" }   // ciano
+            };
+            return themes[modalidade] || { name: "Bolão", c1: "#334155", c2: "#64748b" };
+        }
+
+        function fmtMoney(v) {
+            return `R$ ${Number(v || 0).toFixed(2)}`;
+        }
+
         async function carregarBoloes() {
             try {
                 const res = await fetch(BACKEND + "/api/boloes/ativos");
@@ -173,47 +406,84 @@
                 grid.innerHTML = "";
 
                 if (!data.ok || !data.boloes.length) {
-                    grid.innerHTML = "<p>Nenhum bolão disponível no momento.</p>";
+                    grid.innerHTML = "<p class='muted'>Nenhum bolão disponível no momento.</p>";
                     return;
                 }
 
                 data.boloes.forEach(b => {
+                    const theme = getTheme(b.modalidade);
+
                     const card = document.createElement("div");
                     card.className = "card";
+                    // cores por card via CSS vars
+                    card.style.setProperty("--theme1", theme.c1);
+                    card.style.setProperty("--theme2", theme.c2);
+
+                    const isDisponivel = b.status === "disponivel";
+                    const badgeClass = isDisponivel ? "disponivel" : (b.status || "fechado");
 
                     card.innerHTML = `
-        <div class="top">
-          <h2>
-  <img src="${getIcon(b.modalidade)}" 
-       style="height:32px;vertical-align:middle;margin-right:8px;border-radius:6px;">
-  ${b.nome}
-</h2>
-          <span class="badge ${b.status}">
-            ${b.status === "disponivel" ? "Disponível" : "Esgotado"}
-          </span>
-        </div>
+            <div class="card__top">
+              <div class="topline">
+                <div class="title">
+                  <img src="${getIcon(b.modalidade)}" alt="${theme.name}">
+                  <h2>${b.nome}</h2>
+                </div>
 
-        <p><small>${b.destaque || ""}</small></p>
+                <span class="badge ${badgeClass}">
+                  ${isDisponivel ? "Disponível" : "Esgotado"}
+                </span>
+              </div>
 
-        ${b.dataSorteio
-                            ? `<p class="data-sorteio"><strong>📅 Sorteio:</strong> ${b.dataSorteio}</p>`
-                            : ""
-                        }
+              <div class="chip">🎟️ ${theme.name}</div>
+            </div>
 
-        <p><strong>💰 Valor:</strong> R$ ${Number(b.valorCota).toFixed(2)}</p>
-        <p><strong>🎯 Jogos:</strong> ${b.jogos}</p>
-        <p><strong>🔢 Dezenas:</strong> ${b.dezenas}</p>
-        <p><strong>🏆 Premiação:</strong> R$ ${Number(b.premiacao).toFixed(2)} (${b.premiacaoSub})</p>
+            <div class="card__body">
+              <div class="hint">
+                ⭐ <small>${b.destaque || "Sem destaque"}</small>
+              </div>
 
-        ${b.status === "disponivel"
+              <div class="info">
+                ${b.dataSorteio ? `
+                  <div class="row">
+                    <div class="k">📅 Sorteio</div>
+                    <div class="v">${b.dataSorteio}</div>
+                  </div>
+                ` : ""}
+
+                <div class="row">
+                  <div class="k">💰 Valor</div>
+                  <div class="v">${fmtMoney(b.valorCota)}</div>
+                </div>
+
+                <div class="row">
+                  <div class="k">🎯 Jogos</div>
+                  <div class="v">${b.jogos}</div>
+                </div>
+
+                <div class="row">
+                  <div class="k">🔢 Dezenas</div>
+                  <div class="v">${b.dezenas}</div>
+                </div>
+
+                <div class="row" style="grid-column: 1 / -1;">
+                  <div class="k">🏆 Premiação</div>
+                  <div class="v">${fmtMoney(b.premiacao)} <span style="font-weight:750;color:rgba(234,242,255,.78)">(${b.premiacaoSub})</span></div>
+                </div>
+              </div>
+
+              <div class="cta">
+                ${isDisponivel
                             ? `<button class="btn-pagar" onclick="window.open('${b.url}','_blank')">
-              ✅ Selecionar e pagar
-            </button>`
+                      ✅ Compre seu bolão
+                    </button>`
                             : `<button class="btn-disabled" disabled>
-              ❌ Indisponível
-            </button>`
+                      ❌ Indisponível
+                    </button>`
                         }
-      `;
+              </div>
+            </div>
+          `;
 
                     grid.appendChild(card);
                 });
@@ -227,8 +497,7 @@
         (function initTicker() {
             const content = document.getElementById("tickerContent");
             if (!content) return;
-
-            content.innerHTML += content.innerHTML; // duplica
+            content.innerHTML += content.innerHTML;
         })();
 
         carregarBoloes();
